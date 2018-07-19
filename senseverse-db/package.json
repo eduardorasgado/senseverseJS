@@ -1,0 +1,11 @@
+{
+  "name": "senseverse-db",
+  "version": "1.0.0",
+  "description": "DB module for IoT tool",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "EduardoRasgado",
+  "license": "MIT"
+}
