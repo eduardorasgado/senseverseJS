@@ -5,11 +5,13 @@
   "main": "index.js",
   "scripts": {
     "setup": "DEBUG=senseverse:* node setup.js",
-    "lint": "standard"
+    "lint": "standard",
+    "test": "DEBUG=senseverse:* ava tests/ --verbose"
   },
   "author": "EduardoRasgado",
   "license": "MIT",
   "devDependencies": {
+    "ava": "^0.25.0",
     "standard": "^11.0.1"
   },
   "dependencies": {
