@@ -53,7 +53,9 @@ test('Agent', t => {
 test.serial('Setup', t => {
   // funciones que sinon va a ejecutar
   t.true(AgentStub.hasMany.called, 'AgentModel.hasMany was executed')
+  t.true(AgentStub.hasMany.calledWith(MetricStub), 'Argument should be the MetricModel')
   t.true(MetricStub.belongsTo.called, 'MetricModel.belongsTo was executed')
+  t.true(MetricStub.belongsTo.calledWith(AgentStub), 'Argument should be the AgentModel')
 })
 /*
 Test Coverage
