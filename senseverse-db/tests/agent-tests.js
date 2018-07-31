@@ -21,7 +21,7 @@ let sandbox = null
 // correr una funcion previo al test
 test.beforeEach(async () => {
   // sinon sandbox necesario para el caso del hasMany
-  sandbox = sinon.sandbox.create()
+  sandbox = sinon.createSandbox()
   AgentStub = {
     hasMany: sandbox.spy()
   }
