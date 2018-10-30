@@ -3,10 +3,34 @@
 const setupDatabase = require("./lib/db");
 const setupAgentModel = require("./models/agent");
 const setupMetricModel = require("./models/metric");
+// a package to make default values easier
+// USE: it overrides all of undefined properties in
+// options with the clones of properties defined
+// in defaults
+const defaults = require('defaults');
 
 // this module should return a promise
 module.exports = async function(config)
 {
+    //taking properties in config, in case
+    // they are not defined, take these by default
+    config = defaults(config, {
+        // defaults to be able to make unit testing
+        // safely to agents
+        // database in memory
+        dialect: 'sqlite',
+        pool: {
+            max: 10,
+            min: 0,
+            idle: 10000
+        },
+        query: {
+            // each query it should delivers JSON
+            // reason: sqlite usually delivers complex objects
+            raw: true
+        }
+    });
+
     // this design pattern will let us create
     // easy unit testing
     const sequelize = setupDatabase(config);
