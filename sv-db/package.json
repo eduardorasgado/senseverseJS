@@ -4,6 +4,7 @@
   "description": "Database module for a simple IoT platform",
   "main": "index.js",
   "scripts": {
+    "test": "DEBUG=senseverse:* ava tests/ --verbose",
     "setup": "DEBUG=senseverse:* node setup.js"
   },
   "repository": {
@@ -27,5 +28,8 @@
     "pg": "^7.6.0",
     "pg-hstore": "^2.3.2",
     "sequelize": "^4.41.0"
+  },
+  "devDependencies": {
+    "ava": "^0.25.0"
   }
 }
