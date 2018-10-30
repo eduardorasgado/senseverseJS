@@ -4,7 +4,7 @@
   "description": "Database module for a simple IoT platform",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "setup": "DEBUG=senseverse:* node setup.js"
   },
   "repository": {
     "type": "git",
@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/eduardorasgado/senseverseJS#readme",
   "dependencies": {
+    "debug": "^4.1.0",
     "pg": "^7.6.0",
     "pg-hstore": "^2.3.2",
     "sequelize": "^4.41.0"

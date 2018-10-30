@@ -26,6 +26,10 @@ module.exports = async function(config)
 
     // database configuration
     //sequelize.sync();
+    // requiring ./setup.js setup flag after
+    // running correct settings
+    // force true: if database exists: delete db and create new
+    if(config.setup) await sequelize.sync({ force: true });
 
     const Agent = {};
     const Metric = {};
