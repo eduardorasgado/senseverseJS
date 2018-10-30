@@ -1,5 +1,16 @@
 /*
 * UNIT TESTING FOR TEST DRIVEN SOFTWARE DEVELOPMENT
+*
+* Test Coverage(nyc module):
+*   A technique to discover the percentage of
+*   the project's code that actually is been tested.
+*   To apply:
+*   nyc --reporter=lcov in json:
+*       "test": "DEBUG=senseverse:* nyc --reporter=lcov ava tests/ --verbose",
+
+*   will be make available our test suite analysis in
+*   a easy way: html inside coverage folder in root of the
+*   project
 * */
 
 'use strict';

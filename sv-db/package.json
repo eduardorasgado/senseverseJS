@@ -4,7 +4,7 @@
   "description": "Database module for a simple IoT platform",
   "main": "index.js",
   "scripts": {
-    "test": "DEBUG=senseverse:* ava tests/ --verbose",
+    "test": "DEBUG=senseverse:* nyc --reporter=lcov ava tests/ --verbose",
     "setup": "DEBUG=senseverse:* node setup.js"
   },
   "repository": {
@@ -32,6 +32,7 @@
   },
   "devDependencies": {
     "ava": "^0.25.0",
+    "nyc": "^13.1.0",
     "sqlite3": "^4.0.3"
   }
 }
