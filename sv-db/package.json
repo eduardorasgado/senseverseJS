@@ -1,0 +1,28 @@
+{
+  "name": "sv-db",
+  "version": "1.0.0",
+  "description": "Database module for a simple IoT platform",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eduardorasgado/senseverseJS.git"
+  },
+  "keywords": [
+    "db",
+    "IoT"
+  ],
+  "author": "Eduardo Rasgado",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/eduardorasgado/senseverseJS/issues"
+  },
+  "homepage": "https://github.com/eduardorasgado/senseverseJS#readme",
+  "dependencies": {
+    "pg": "^7.6.0",
+    "pg-hstore": "^2.3.2",
+    "sequelize": "^4.41.0"
+  }
+}
