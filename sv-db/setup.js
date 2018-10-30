@@ -51,7 +51,7 @@ async function setup() {
         .catch(handleFatalError);
 
     // if await passed:
-    console.log("Success!");
+    console.log(`${chalk.blue('[MESSAGE]')}: ${"Success!"}`);
     // sending flag of no errors
     process.exit(0);
 }
@@ -59,7 +59,7 @@ async function setup() {
 function handleFatalError (err)
 {
     // in case db initialization fails
-    console.error(err.message);
+    console.error(`${chalk.red('[Fatal error]')}: ${err.message}`);
     console.error(err.stack);
     // return a 1 flag: failure
     process.exit(1);
