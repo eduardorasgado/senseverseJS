@@ -80,6 +80,18 @@ test.beforeEach(async () =>
         // is not a global stub
         hasMany: sandbox.spy()
     };
+
+    // Model findById Stub, it is a functionality for
+    // find id testing
+    AgentStub.findById = sandbox.stub();
+    // returns a promise because the request is
+    // async
+    AgentStub.findById.withArgs(id).returns(
+        // returning the function inside fixture agent
+        // it will receives the json with the user(fake)
+        Promise.resolve(agentFixtures.byId(id))
+    );
+
     //  this promise will pass an empty config json
     // to setupDatabase, and thanks to defaults module
     // it will handle database connection to sqlite and
@@ -137,6 +149,11 @@ test.serial('Agent#findById', async t =>
     // creating a test using fixtures
     // calling the service of agent model defined in lib/agent
     let agent = await db.Agent.findById(id);
+
+    t.true(AgentStub.findById.called, 'findById should be called');
+    t.true(AgentStub.findById.calledOnce, 'findById should be called once');
+    t.true(AgentStub.findById.calledWith(id), 'findById should be called with specified id');
+
     // making the test calling byId defined in fixture/agent
     t.deepEqual(agent, agentFixtures.byId(id), "should be the same");
 });
