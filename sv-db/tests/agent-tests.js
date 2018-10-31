@@ -55,6 +55,12 @@ let MetricStub = {
     belongsTo: sinon.spy()
 };
 
+
+// cloning object single from fixtures
+let single = Object.assign({}, agentFixtures.single);
+// id will be used in a test Agent#findById
+let id = 1;
+
 // this stub will be implemented in beforeEach
 let AgentStub = null;
 // to be able to use sinon in other scope
@@ -124,4 +130,11 @@ test.serial('Setup', t =>
 
     t.true(MetricStub.belongsTo.called, 'MetricModel.belongsTo was executed.');
     t.true(MetricStub.belongsTo.calledWith(AgentStub), ' Argument should be the agent model')
+});
+
+test.serial('Agent#findById', async t =>
+{
+    // creating a text using fixtures
+    let agent = await db.Agent.findById(id);
+    t.deepEqual(agent, agentFixtures.findById(id), "should be the same");
 });
