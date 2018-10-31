@@ -16,6 +16,27 @@
 'use strict';
 /* requiring ava, a Unit Testing Enviroment for NodeJS*/
 const test = require('ava');
+const proxyquire = require("proxyquire");
+
+/*
+    Terminology:(in Spanish)
+
+    Stub, objeto que es similar en su funcionalidad al objeto
+    original (nuestro modelo), pero que la respuesta y los
+    argumentos de entrada están previamente especificados con
+    una librería o estrategia. Objetos falsos que se van a
+    comportar de manera similar a los objetos reales.
+
+    Spy es una función específica que permite hacer preguntas
+    como: ¿Cuantas veces fue llamada una función?, ¿con que
+    argumentos?, es muy útil a la hora de hacer pruebas.
+
+    Sandbox ambiente especifico de sinon que va a funcionar para
+    un caso particular (no de manera global). Cuando se termine
+    de ejecutar la prueba se reinicia el sandbox.
+
+* */
+const sinon = require("sinon");
 
 // we don't want to make a test using my database
 // in postgres, it will be in sqlite
@@ -23,16 +44,54 @@ const config = {
     //
 };
 
+// for mocks and stubs
+// Stubs are used to make an abstraction of our objects
+// in case we want to make testing,
+// we are using SINON module to make these stubs
+let MetricStub = {
+    // spy is a function to be able to make question in test
+    belongsTo: sinon.spy()
+};
+
+// this stub will be implemented in beforeEach
+let AgentStub = null;
+// to be able to use sinon in other scope
+let sandbox = null;
+
 let db = null;
 // before each test we can create instances or whatever we need
 test.beforeEach(async () =>
 {
+    // creating sandbox to be able to call sinon spy inside
+    // this scope
+    sandbox = sinon.createSandbox();
+    // stub to complement relation between metric and
+    // agent
+    AgentStub = {
+        // we create a sinon sandbox because this stub
+        // is not a global stub
+        hasMany: sandbox.spy()
+    };
     //  this promise will pass an empty config json
     // to setupDatabase, and thanks to defaults module
     // it will handle database connection to sqlite and
     // not to postgres real db, to make secure testing
-    const setupDatabase = require('../');
+    const setupDatabase = proxyquire('../', {
+        // this is possible because of PROXYQUIRE module
+        // this will intercepts the import of these real
+        // models and will pass the stubs to make the testing
+        './models/agent': () => AgentStub,
+        './models/metric': () => MetricStub
+    });
     db = await setupDatabase(config);
+});
+
+// note that this will be executed after each test,
+// and it is not an async function
+test.afterEach(() =>
+{
+    // if a sandbox exists, recreate it
+    sandbox && sandbox.restore()
 });
 
 // check package.json to test script setting
@@ -47,4 +106,16 @@ test('Agent', t =>
     // truthy means we obtain a value, and that value can
     // be taken as true
     t.truthy(db.Agent, "Agent service should exist");
+});
+
+//Avoiding ava does parallel testing
+// it results in sequential testing
+test.serial('Setup', t =>
+{
+    // these propesties come from sinon
+    t.true(AgentStub.hasMany.called, 'AgentModel.hasMany has been executed');
+    t.true(AgentStub.hasMany.calledWith(MetricStub), 'Argument should be the metric model');
+
+    t.true(MetricStub.belongsTo.called, 'MetricModel.belongsTo was executed.');
+    t.true(MetricStub.belongsTo.calledWith(AgentStub), ' Argument should be the agent model')
 });
