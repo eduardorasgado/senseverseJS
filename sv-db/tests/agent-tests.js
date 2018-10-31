@@ -17,6 +17,8 @@
 /* requiring ava, a Unit Testing Enviroment for NodeJS*/
 const test = require('ava');
 const proxyquire = require("proxyquire");
+// calling the mock suite to test funcionality
+const agentFixtures = require("./fixtures/agent");
 
 /*
     Terminology:(in Spanish)
@@ -83,6 +85,10 @@ test.beforeEach(async () =>
         './models/agent': () => AgentStub,
         './models/metric': () => MetricStub
     });
+    // calling the promise given by index.js
+    // and passing the empty config
+    // empty will be taken by defaults module and substitute
+    // postgres by sqlite3
     db = await setupDatabase(config);
 });
 

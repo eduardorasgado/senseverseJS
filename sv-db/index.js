@@ -1,8 +1,11 @@
 'use strict';
 
 const setupDatabase = require("./lib/db");
+// in agent-test these two requirements will be substitute
+// by stubs
 const setupAgentModel = require("./models/agent");
 const setupMetricModel = require("./models/metric");
+
 // a package to make default values easier
 // USE: it overrides all of undefined properties in
 // options with the clones of properties defined
