@@ -5,7 +5,8 @@ const setupDatabase = require("./lib/db");
 // by stubs
 const setupAgentModel = require("./models/agent");
 const setupMetricModel = require("./models/metric");
-
+// requiring the file where agent services are defined
+const setupAgent = require("./lib/agent");
 // a package to make default values easier
 // USE: it overrides all of undefined properties in
 // options with the clones of properties defined
@@ -58,7 +59,7 @@ module.exports = async function(config)
     // force true: if database exists: delete db and create new
     if(config.setup) await sequelize.sync({ force: true });
 
-    const Agent = {};
+    const Agent = setupAgent(AgentModel);
     const Metric = {};
 
     return {

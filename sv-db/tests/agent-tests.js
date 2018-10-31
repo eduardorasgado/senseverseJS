@@ -134,7 +134,9 @@ test.serial('Setup', t =>
 
 test.serial('Agent#findById', async t =>
 {
-    // creating a text using fixtures
+    // creating a test using fixtures
+    // calling the service of agent model defined in lib/agent
     let agent = await db.Agent.findById(id);
-    t.deepEqual(agent, agentFixtures.findById(id), "should be the same");
+    // making the test calling byId defined in fixture/agent
+    t.deepEqual(agent, agentFixtures.byId(id), "should be the same");
 });
