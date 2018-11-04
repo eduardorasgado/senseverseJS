@@ -157,3 +157,10 @@ test.serial('Agent#findById', async t =>
     // making the test calling byId defined in fixture/agent
     t.deepEqual(agent, agentFixtures.byId(id), "should be the same");
 });
+
+test.serial('Agent#createOrUpdate -exist', async t =>
+{
+    // testing when user exists
+    let agent = await db.Agent.createOrUpdate(single);
+    t.deepEqual(agent, single, 'agent should be the same');
+});
