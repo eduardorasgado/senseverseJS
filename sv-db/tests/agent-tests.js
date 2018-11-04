@@ -81,6 +81,9 @@ test.beforeEach(async () =>
         hasMany: sandbox.spy()
     };
 
+    // Model findOne stub(agent service abstraction)
+    AgentStub
+
     // Model findById Stub, it is a functionality for
     // find id testing
     AgentStub.findById = sandbox.stub();
