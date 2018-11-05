@@ -6,23 +6,66 @@
 
 const test = require('ava');
 const sinon = require("sinon");
+const proxyquire = require("proxyquire");
 const metricFixtures = require("./fixtures/metric");
 
 // fake values
 let uuid = 'yyy-yyy-yyy';
 
+// to fake the relation and the model Agent
+let AgentStub = null;
 // creating the fake metric to test vs original
 let MetricStub = null;
+
 // test sinon in other scope
-let sandbox = null;
+let sandboxMetric = null;
+let sandboxAgent = null;
 
 // to test findOne stub
 let uuidArgs = {
     where: uuid
 }
+let db = null;
+const config = {
+    // empty to call defaults on db
+}
+test.beforeEach( async () =>
+{
+    //
+    sandboxMetric = sinon.createSandbox();
+    sandboxAgent = sinon.createSandbox();
+
+    AgentStub = {
+        hasMany: sandboxAgent.spy()
+    };
+    // initializing Metric stub
+    MetricStub = {
+        belongsTo: sandboxMetric.spy()
+    }
+
+    // open ../index.js and substitute some things
+    // to be able to practice testing safely with sqlite3
+    const setupDatabase = proxyquire('../', {
+        './models/agent': () => AgentStub,
+        './models/metric': () => MetricStub
+    });
+    db = await setupDatabase(config);
+});
+
+test.afterEach(() =>
+{
+    sandboxMetric && sandboxMetric.restore();
+    sandboxAgent && sandboxAgent.restore();
+})
 
 // test to ava
 test('make metric test pass', t =>
 {
     t.pass();
 });
+
+test('Metric', t =>
+{
+    // expecting any return could indicates Metric exists
+    t.truthy(db.Metric, "Metric service should exist");
+})

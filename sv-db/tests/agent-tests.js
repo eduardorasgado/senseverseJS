@@ -185,7 +185,7 @@ test.beforeEach(async () =>
 test.afterEach(() =>
 {
     // if a sandbox exists, recreate it
-    sandbox && sandbox.restore()
+    sandbox && sandbox.restore();
 });
 
 // check package.json to test script setting
