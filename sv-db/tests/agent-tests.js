@@ -58,6 +58,8 @@ let MetricStub = {
 
 // cloning object single from fixtures
 let single = Object.assign({}, agentFixtures.single);
+// bring all the agents in fixtures/agent
+let allFromFixture = agentFixtures.all;
 
 // id will be used in a test Agent#findById
 let id = 1;
@@ -115,6 +117,11 @@ test.beforeEach(async () =>
         // it will receives the json with the user(fake)
         Promise.resolve(agentFixtures.byId(id))
     );
+
+    // Model service function findAll() stub
+    AgentStub.findAll = sandbox.stub();
+    AgentStub.findAll
+        .returns(agentFixtures.all);
 
     //  this promise will pass an empty config json
     // to setupDatabase, and thanks to defaults module
@@ -201,6 +208,21 @@ test.serial('Agent#findByUuid', async (t) =>
     // testing finding agent  using an uuid
     let agent = await db.Agent.findByUuid(uuid);
     // checking procedures integrity
-    t.true(AgentStub.findOne.calledOnce, "finfOne should be called once in findByUuid testing");
+    t.true(AgentStub.findOne.calledOnce, "findOne should be called once in findByUuid testing");
     t.deepEqual(agent, agentFixtures.byUuid(uuid), "UUID should be the same");
 });
+
+test.serial('Agent#findAll', async t =>
+{
+    // basically look for all users, do not need arguments
+    let all = await db.Agent.findAll();
+    t.true(AgentStub.findAll.calledOnce, "findAll not called once.");
+    t.deepEqual(all, allFromFixture, "Agents are not equal");
+});
+
+// test.serial('Agent#findConnected', async t =>
+// {
+//     //
+//     let connected = await db.Agent.findConnected();
+//
+// });
