@@ -31,6 +31,35 @@ module.exports = function setupMetric(MetricModel, AgentModel)
     }
 
     // looking for all metrics filtering by agent and type
+    async function findByTypeAgentUuid(type, uuid)
+    {
+        // creating the filter
+        const whatToFilter = {
+            // what should be substracted from the found data
+            attributes: [ 'id', 'type', 'value', 'createdAt' ],
+            // filter by type
+            where: {
+                type
+            },
+            // take just 20 objects
+            limit: 20,
+            order: [['createdAt', 'DESC']],
+            // create a join query to agent model
+            include: [{
+                attributes:[],
+                // filter using the agent
+                model: AgentModel,
+                where: {
+                    uuid
+                }
+            }],
+            // to become this query result into a json
+            raw: true
+        };
+        // return the search
+        return MetricModel.findAll(whatToFilter);
+    }
+
 
     async function create(uuid, metric)
     {
@@ -55,6 +84,7 @@ module.exports = function setupMetric(MetricModel, AgentModel)
     return {
         //
         create,
-        findByAgentUuid
+        findByAgentUuid,
+        findByTypeAgentUuid
     };
 };
