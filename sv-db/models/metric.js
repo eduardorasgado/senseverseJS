@@ -17,7 +17,7 @@ module.exports = function setupMetricModel(config)
     return sequelize.define('metric', {
         type: opts,
         value: {
-            type: Sequelize.STRING,
+            type: Sequelize.TEXT,
             allowNull: false
         }
     });

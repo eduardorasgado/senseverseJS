@@ -9,9 +9,19 @@ const sinon = require("sinon");
 const proxyquire = require("proxyquire");
 const metricFixtures = require("./fixtures/metric");
 
-// fake values
+// ------------------fake values ------------
 let uuid = 'yyy-yyy-yyy';
+let newMetric = {
+    type: "test",
+    value: "some description for type and the metric itself"
+}
 
+// to test findOne stub
+let uuidArgs = {
+    where: uuid
+}
+
+//---------- variables and jsons for testing------
 // to fake the relation and the model Agent
 let AgentStub = null;
 // creating the fake metric to test vs original
@@ -21,10 +31,6 @@ let MetricStub = null;
 let sandboxMetric = null;
 let sandboxAgent = null;
 
-// to test findOne stub
-let uuidArgs = {
-    where: uuid
-}
 let db = null;
 const config = {
     // empty to call defaults on db
@@ -68,4 +74,11 @@ test('Metric', t =>
 {
     // expecting any return could indicates Metric exists
     t.truthy(db.Metric, "Metric service should exist");
-})
+});
+
+test.serial('Metric#create', async t =>
+{
+    //
+    let metric = await db.Metric.create(uuid, newMetric);
+    t.deepEqual(metric, newMetric, "new metric should be the same for both cases");
+});

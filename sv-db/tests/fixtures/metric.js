@@ -3,8 +3,8 @@
 // metric fixture to make metric testing
 
 const metric = {
-    type: 'test',
-    value: 1
+    type: "test",
+    value: "this metric describes how temperature is increasing over the time"
 }
 module.exports = {
     metric: metric
