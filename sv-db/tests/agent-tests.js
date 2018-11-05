@@ -93,6 +93,15 @@ test.beforeEach(async () =>
     AgentStub.findOne = sandbox.stub();
     // for cond object in service agent
     AgentStub.findOne.withArgs(uuidArgs)
+        // lib/agent service findOne is inside an await statement
+        // so this stub should return a promise
+        .returns(Promise.resolve(agentFixtures.byUuid(uuid)));
+
+    // Model update stub
+    AgentStub.update = sandbox.stub();
+    // taking same arguments that createOrUpdate is taking
+    // then (agent, cond)
+    AgentStub.update.withArgs(single, uuidArgs)
         .returns(Promise.resolve(agentFixtures.byUuid(uuid)));
 
     // Model findById Stub, it is a functionality for
@@ -176,5 +185,12 @@ test.serial('Agent#createOrUpdate -exist', async t =>
 {
     // testing when user exists
     let agent = await db.Agent.createOrUpdate(single);
+
+    // verifying all stubs are called in a proper way
+    t.true(AgentStub.findOne.called, "findOne should be called on model");
+    // verifying the stub is called twice as it does in original
+    // service implementation
+    t.true(AgentStub.findOne.calledTwice, "findOne should be called twice");
+    t.true(AgentStub.update.calledOnce, "Update should be called once");
     t.deepEqual(agent, single, 'agent should be the same');
 });
