@@ -86,6 +86,16 @@ let usernameArgs = {
     }
 };
 
+// to test createOrUpdate agent service when it does not exist
+let newAgent = {
+    uuid: '234-123-123',
+    name: 'testGuy',
+    username: 'test123',
+    hostname: 'test',
+    pid: 0,
+    connected: false
+}
+
 let db = null;
 // before each test we can create instances or whatever we need
 test.beforeEach(async () =>
@@ -116,6 +126,18 @@ test.beforeEach(async () =>
     AgentStub.update.withArgs(single, uuidArgs)
         .returns(Promise.resolve(agentFixtures.byUuid(uuid)));
 
+    // Model create stub, to test createOrUpdate if agent does not
+    // exist
+    AgentStub.create = sandbox.stub();
+    AgentStub.create.withArgs(newAgent)
+        // returning special usr with test username
+        .returns(Promise.resolve(
+            {
+                // implementing the method toJSON for create service
+                toJSON() { return newAgent }
+            }
+        ));
+
     // Model findById Stub, it is a functionality for
     // find id testing
     AgentStub.findById = sandbox.stub();
@@ -129,11 +151,11 @@ test.beforeEach(async () =>
 
     // Model function findAll() stub for findAll service
     AgentStub.findAll = sandbox.stub();
-    AgentStub.findAll
+    AgentStub.findAll.withArgs()
         .returns(agentFixtures.all);
     // Same model findAll() but for findConnected service
     // It should have true as argument(look at lib/agent)
-    // we do not need to redeclare the stub, stub can be differenciate
+    // we do not need to redeclare the stub, stub can be difference
     // with and without args by AVA
     //AgentStub.findAll = sandbox.stub();
     AgentStub.findAll.withArgs(usernameArgs)
@@ -183,7 +205,7 @@ test('Agent', t =>
 // it results in sequential testing
 test.serial('Setup', t =>
 {
-    // these propesties come from sinon
+    // these properties come from sinon
     t.true(AgentStub.hasMany.called, 'AgentModel.hasMany has been executed');
     t.true(AgentStub.hasMany.calledWith(MetricStub), 'Argument should be the metric model');
 
@@ -218,6 +240,30 @@ test.serial('Agent#createOrUpdate -exist', async t =>
     t.true(AgentStub.update.calledOnce, "Update should be called once");
     t.deepEqual(agent, single, 'agent should be the same');
 });
+
+test.serial('Agent#createOrUpdate -new', async t =>
+{
+    // testing when user exists
+    let agent = await db.Agent.createOrUpdate(newAgent);
+
+    // verifying all stubs are called in a proper way
+    t.true(AgentStub.findOne.called, "findOne should be called on model");
+    t.true(AgentStub.findOne.calledOnce, "findOne should be called once on model");
+    t.true(AgentStub.findOne.calledWith(
+        {
+            where: {
+                uuid: newAgent.uuid
+            }
+        }
+    ), "findOne should be called with uuid args");
+
+    t.true(AgentStub.create.calledOnce, "Create service should be called");
+    t.true(AgentStub.create.calledOnce, "Create service should be called once");
+    t.true(AgentStub.create.calledWith(newAgent), "Create service should be called with uuid args");
+
+    t.deepEqual(agent, newAgent, 'new agent should be the same');
+});
+
 
 test.serial('Agent#findByUuid', async (t) =>
 {
