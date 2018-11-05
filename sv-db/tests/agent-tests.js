@@ -58,6 +58,7 @@ let MetricStub = {
 
 // cloning object single from fixtures
 let single = Object.assign({}, agentFixtures.single);
+
 // id will be used in a test Agent#findById
 let id = 1;
 let uuid = 'yyy-yyy-yyy';
@@ -193,4 +194,13 @@ test.serial('Agent#createOrUpdate -exist', async t =>
     t.true(AgentStub.findOne.calledTwice, "findOne should be called twice");
     t.true(AgentStub.update.calledOnce, "Update should be called once");
     t.deepEqual(agent, single, 'agent should be the same');
+});
+
+test.serial('Agent#findByUuid', async (t) =>
+{
+    // testing finding agent  using an uuid
+    let agent = await db.Agent.findByUuid(uuid);
+    // checking procedures integrity
+    t.true(AgentStub.findOne.calledOnce, "finfOne should be called once in findByUuid testing");
+    t.deepEqual(agent, agentFixtures.byUuid(uuid), "UUID should be the same");
 });

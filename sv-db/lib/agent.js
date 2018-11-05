@@ -39,8 +39,37 @@ module.exports = function setupAgent(AgentModel)
         return AgentModel.findById(id);
     }
 
+    function findByUuid(uuid)
+    {
+        // returning the first coincidence appears in DB
+        return AgentModel.findOne({
+            where: {
+                uuid
+            }
+        });
+    }
+
+    function findAll()
+    {
+        return AgentModel.findAll();
+    }
+
+    function findConnected ()
+    {
+        // find all agents connected to the service
+        return AgentModel.findAll({
+            where: {
+                connected: true
+            }
+        })
+    }
+
     return {
         createOrUpdate,
-        findById
+        findById,
+        findByUuid,
+        findAll,
+        findConnected
+
     };
 };
