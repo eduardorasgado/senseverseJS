@@ -60,6 +60,8 @@ let MetricStub = {
 let single = Object.assign({}, agentFixtures.single);
 // bring all the agents in fixtures/agent
 let allFromFixture = agentFixtures.all;
+// connected from fixtures
+let allConnected = agentFixtures.connected;
 
 // id will be used in a test Agent#findById
 let id = 1;
@@ -74,6 +76,13 @@ let sandbox = null;
 let uuidArgs = {
     where: {
         uuid
+    }
+};
+
+// to test connected agents in findConnected stub
+let usernameArgs = {
+    where: {
+        connected: true
     }
 };
 
@@ -118,10 +127,17 @@ test.beforeEach(async () =>
         Promise.resolve(agentFixtures.byId(id))
     );
 
-    // Model service function findAll() stub
+    // Model function findAll() stub for findAll service
     AgentStub.findAll = sandbox.stub();
     AgentStub.findAll
         .returns(agentFixtures.all);
+    // Same model findAll() but for findConnected service
+    // It should have true as argument(look at lib/agent)
+    // we do not need to redeclare the stub, stub can be differenciate
+    // with and without args by AVA
+    //AgentStub.findAll = sandbox.stub();
+    AgentStub.findAll.withArgs(usernameArgs)
+        .returns(agentFixtures.connected);
 
     //  this promise will pass an empty config json
     // to setupDatabase, and thanks to defaults module
@@ -220,9 +236,12 @@ test.serial('Agent#findAll', async t =>
     t.deepEqual(all, allFromFixture, "Agents are not equal");
 });
 
-// test.serial('Agent#findConnected', async t =>
-// {
-//     //
-//     let connected = await db.Agent.findConnected();
-//
-// });
+test.serial('Agent#findConnected', async t =>
+{
+    //
+    let connected = await db.Agent.findConnected();
+    t.true(AgentStub.findAll.calledOnce, "findAll with args for connected agents search should be called once");
+    // allConnected is declared above this file and are the results
+    // in agent fixtures
+    t.deepEqual(connected, allConnected, "Connected agents are not the same");
+});
