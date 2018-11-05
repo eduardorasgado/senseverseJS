@@ -38,6 +38,7 @@ const agentFixtures = require("./fixtures/agent");
     de ejecutar la prueba se reinicia el sandbox.
 
 * */
+// Standalone test spies, stubs and mocks for JavaScript.
 const sinon = require("sinon");
 
 // we don't want to make a test using my database
