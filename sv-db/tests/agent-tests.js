@@ -60,11 +60,19 @@ let MetricStub = {
 let single = Object.assign({}, agentFixtures.single);
 // id will be used in a test Agent#findById
 let id = 1;
+let uuid = 'yyy-yyy-yyy';
 
 // this stub will be implemented in beforeEach
 let AgentStub = null;
 // to be able to use sinon in other scope
 let sandbox = null;
+
+// to ttest createOrUpdateStub
+let uuidArgs = {
+    where: {
+        uuid
+    }
+};
 
 let db = null;
 // before each test we can create instances or whatever we need
@@ -82,7 +90,10 @@ test.beforeEach(async () =>
     };
 
     // Model findOne stub(agent service abstraction)
-    AgentStub
+    AgentStub.findOne = sandbox.stub();
+    // for cond object in service agent
+    AgentStub.findOne.withArgs(uuidArgs)
+        .returns(Promise.resolve(agentFixtures.byUuid(uuid)));
 
     // Model findById Stub, it is a functionality for
     // find id testing

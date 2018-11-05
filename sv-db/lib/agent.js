@@ -19,7 +19,7 @@ module.exports = function setupAgent(AgentModel)
         const existingAgent = await AgentModel.findOne(cond);
         if(existingAgent)
         {
-            const updated = await AgentModel.update(agent, uuid);
+            const updated = await AgentModel.update(agent, cond);
             // if updated is done then return from database
             // (not from the object created), otherwise
             // return the existing agent
