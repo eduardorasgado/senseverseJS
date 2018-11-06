@@ -27,7 +27,8 @@ module.exports = function setupMetric(MetricModel, AgentModel)
             raw: true
         };
         // here we will return metric types
-        return MetricModel.findAll(joinbyAgent);
+        let result = await MetricModel.findAll(joinbyAgent);
+        return result;
     }
 
     // looking for all metrics filtering by agent and type
@@ -57,7 +58,8 @@ module.exports = function setupMetric(MetricModel, AgentModel)
             raw: true
         };
         // return the search
-        return MetricModel.findAll(whatToFilter);
+        let result = await MetricModel.findAll(whatToFilter);
+        return result;
     }
 
 

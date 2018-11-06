@@ -16,8 +16,8 @@ let uuid2 = 'yyy-yyy-yyw';
 //uuid: "yyy-yyy-234",
 let newMetric = {
     agentId: 1,
-    type: "test",
-    value: "some description for type and the metric itself"
+    type: "IMU",
+    value: "43,140,32",
 }
 
 // to test findOne stub
@@ -25,11 +25,31 @@ let uuidArgs = {
     where: { uuid }
 }
 
+
 //---------- variables and jsons for testing------
 // to fake the relation and the model Agent
 let AgentStub = null;
 // creating the fake metric to test vs original
 let MetricStub = null;
+
+let metricArgs =
+    {
+        attributes: [ 'type' ],
+        group: [ 'type' ],
+        // include will help us to do the JOIN
+        include: [ {
+            // query do not have any info
+            attributes: [],
+            // the join will be through model
+            model: AgentStub,
+            // join will be filter by uuid
+            where: {
+                uuid
+            }
+        }],
+        // return just in json format
+        raw: true
+    };
 
 // test sinon in other scope
 let sandbox = null;
@@ -68,6 +88,18 @@ test.beforeEach( async () =>
             }
         ));
 
+    // including the agent model to metricArgs
+    metricArgs.include[0].model = AgentStub;
+
+    // Model for findByType
+    MetricStub.findAll = sandbox2.stub();
+    MetricStub.findAll.withArgs(
+        metricArgs
+    )
+        .returns(Promise.resolve(
+            metricFixtures.findByAgentUuid(uuid)
+        ));
+
     // open ../index.js and substitute some things
     // to be able to practice testing safely with sqlite3
     const setupDatabase = proxyquire('../', {
@@ -80,7 +112,7 @@ test.beforeEach( async () =>
 test.afterEach(() =>
 {
     sandbox && sandbox.restore();
-    sandbox2 && sandbox.restore();
+    sandbox2 && sandbox2.restore();
 })
 
 // test to ava
@@ -116,7 +148,12 @@ test.serial('Metric#create', async t =>
 test.serial('Metric#findByAgentUuid', async t =>
 {
     //
-    t.pass();
+    let metric = await db.Metric.findByAgentUuid(uuid);
+    t.true(MetricStub.findAll.called, "findAll is not called");
+    t.true(MetricStub.findAll.calledWith(
+        metricArgs
+    ), "not called with args")
+    t.deepEqual(metric, metricFixtures.findByAgentUuid(uuid), "findByAgentUuid search does not work");
 });
 
 test.serial('Metric#findByTypeAgentUuid', async t =>

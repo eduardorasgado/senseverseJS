@@ -1,20 +1,24 @@
 'use strict';
+const agentFixtures = require("./agent");
 
 // metric fixture to make metric testing
 
 const metric = {
-    uuid: "yyy-yyy-yyw",
+    id: 1,
+    agentId: 1,
     type: "test",
-    value: "this metric describes how temperature is increasing over the time"
+    value: "46%",
+    createdAt: new Date(),
+    agent: agentFixtures.byId(1)
 }
 
 const metrics = [
     metric,
-    extendMetrics(metric, {type: "test2", value: "me me me"}),
-    extendMetrics(metric, {uuid: "yyy-yyy-yyz", type: "original"}),
-    extendMetrics(metric, {uuid: "yyy-yyy-yya", type: "altitude"}),
-    extendMetrics(metric, {uuid: "yyy-yyy-yyz", type: "pressure"}),
-    extendMetrics(metric, {type: "gyroscope", value: "to describe orientation in environment"}),
+    extendMetrics(metric, {id: 2,type: "test2", value: "100%", agent: agentFixtures.byId(2)}),
+    extendMetrics(metric, {id: 3, agentId: 2, type: "original", value: "88%", agent: agentFixtures.byId(5)}),
+    extendMetrics(metric, {id: 4, agentId: 2, type: "altitude", value: "+43m", agent: agentFixtures.byId(2)}),
+    extendMetrics(metric, {id: 5, agentId: 3, type: "pressure", value: "12%", agent: agentFixtures.byId(3)}),
+    extendMetrics(metric, {id: 6, type: "gyroscope", value: "45,-1,150"}),
 ]
 
 // a way to clone the objects
@@ -24,7 +28,19 @@ function extendMetrics(obj, values)
     return Object.assign(metricClone, values);
 }
 
+function findByAgentUuid (uuid) {
+    return metrics.filter(m => m.agent ? m.agent.uuid === uuid : false).map(m => {
+        const clone = Object.assign({}, m)
+
+        delete clone.agent
+
+        return clone
+    })
+}
+
 module.exports = {
     metric: metric,
-    byUuid: id => metrics.filter(m => m.uuid == id).shift()
+    all: metrics,
+    //byUuid: id => metrics.filter(m => m.agentId == id).shift(),
+    findByAgentUuid
 }
