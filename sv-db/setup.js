@@ -16,7 +16,7 @@ const chalk = require("chalk");
 // to make user some questions
 const inquirer= require("inquirer");
 
-// promt let me mkae questions to user, those questions are promises
+// promt let me make questions to user, those questions are promises
 const prompt = inquirer.createPromptModule();
 
 async function setup() {
