@@ -76,7 +76,7 @@ module.exports = function setupMetric(MetricModel, AgentModel)
             //metric.agentId = agent.id;
             Object.assign(metric, { agentId: agent.id });
             // allocate metric in database
-            const result = await MetricMode.create(metric);
+            const result = await MetricModel.create(metric);
             return result.toJSON();
         }
     }

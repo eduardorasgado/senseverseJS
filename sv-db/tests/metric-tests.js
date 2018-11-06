@@ -11,7 +11,9 @@ const metricFixtures = require("./fixtures/metric");
 
 // ------------------fake values ------------
 let uuid = 'yyy-yyy-yyy';
+let uuid2 = 'yyy-yyy-yyw';
 let newMetric = {
+    uuid: "yyy-yyy-234",
     type: "test",
     value: "some description for type and the metric itself"
 }
@@ -48,6 +50,12 @@ test.beforeEach( async () =>
     MetricStub = {
         belongsTo: sandboxMetric.spy()
     }
+
+    // Model findOne stub for use in Metric services
+    AgentStub.findOne = sandboxAgent.stub();
+    AgentStub.findOne.withArgs(uuidArgs)
+        .returns(Promise.resolve(metricFixtures.byUuid(uuid)));
+
 
     // open ../index.js and substitute some things
     // to be able to practice testing safely with sqlite3
