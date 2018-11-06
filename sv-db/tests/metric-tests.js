@@ -15,13 +15,14 @@ let uuid = 'yyy-yyy-yyy';
 let uuid2 = 'yyy-yyy-yyw';
 //uuid: "yyy-yyy-234",
 let newMetric = {
+    agentId: 1,
     type: "test",
     value: "some description for type and the metric itself"
 }
 
 // to test findOne stub
 let uuidArgs = {
-    where: uuid
+    where: { uuid }
 }
 
 //---------- variables and jsons for testing------
@@ -31,40 +32,41 @@ let AgentStub = null;
 let MetricStub = null;
 
 // test sinon in other scope
-let sandboxMetric = null;
-let sandboxAgent = null;
+let sandbox = null;
+let sandbox2 = null;
 
 let db = null;
 const config = {
     // empty to call defaults on db
+    logging(){}
 }
 test.beforeEach( async () =>
 {
-    //
-    sandboxMetric = sinon.createSandbox();
-    sandboxAgent = sinon.createSandbox();
+    // one sandbox for agent and metric
+    sandbox = sinon.createSandbox();
+    sandbox2 = sinon.createSandbox(); // metric sandbox
 
     AgentStub = {
-        hasMany: sandboxAgent.spy()
+        hasMany: sandbox.spy()
     };
     // initializing Metric stub
     MetricStub = {
-        belongsTo: sandboxMetric.spy()
+        belongsTo: sandbox2.spy()
     }
 
     // Model findOne stub for use in Metric services
-    // AgentStub.findOne = sandboxAgent.stub();
-    // AgentStub.findOne.withArgs(uuidArgs)
-    //     .returns(Promise.resolve(agentFixtures.byUuid(uuid)));
-    //
+    AgentStub.findOne = sandbox.stub();
+    AgentStub.findOne.withArgs(uuidArgs)
+        .returns(Promise.resolve(agentFixtures.byUuid(uuid)));
+
     // //Model create stub
-    // MetricStub.create = sandboxMetric.stub();
-    // MetricStub.create.withArgs(newMetric)
-    //     .returns(Promise.resolve(
-    //         {
-    //             toJSON() { return newMetric }
-    //         }
-    //     ));
+    MetricStub.create = sandbox2.stub();
+    MetricStub.create.withArgs(newMetric)
+        .returns(Promise.resolve(
+            {
+                toJSON() { return newMetric }
+            }
+        ));
 
     // open ../index.js and substitute some things
     // to be able to practice testing safely with sqlite3
@@ -77,8 +79,8 @@ test.beforeEach( async () =>
 
 test.afterEach(() =>
 {
-    sandboxMetric && sandboxMetric.restore();
-    sandboxAgent && sandboxAgent.restore();
+    sandbox && sandbox.restore();
+    sandbox2 && sandbox.restore();
 })
 
 // test to ava
@@ -102,11 +104,11 @@ test.serial('Setup', t =>
     t.true(MetricStub.belongsTo.calledWith(AgentStub), "MetricStub.belongsTo was not executed");
 })
 
-// test.serial('Metric#create', async t =>
-// {
-//     // evaluating create service
-//     let metric = await db.Metric.create(uuid, newMetric);
-//     t.true(AgentStub.findOne.called, "AgentStub findOne should be called");
-//     t.true(MetricStub.create.called, "MetricStub create should be called");
-//     t.deepEqual(metric, newMetric, "new metric should be the same for both cases");
-// });
+test.serial('Metric#create', async t =>
+{
+    // evaluating create service
+    let metric = await db.Metric.create(uuid, newMetric);
+    t.true(AgentStub.findOne.called, "AgentStub findOne should be called");
+    t.true(MetricStub.create.called, "MetricStub create should be called");
+    t.deepEqual(metric, newMetric, "new metric should be the same for both cases");
+});
