@@ -112,3 +112,15 @@ test.serial('Metric#create', async t =>
     t.true(MetricStub.create.called, "MetricStub create should be called");
     t.deepEqual(metric, newMetric, "new metric should be the same for both cases");
 });
+
+test.serial('Metric#findByAgentUuid', async t =>
+{
+    //
+    t.pass();
+});
+
+test.serial('Metric#findByTypeAgentUuid', async t =>
+{
+    //
+    t.pass();
+});
