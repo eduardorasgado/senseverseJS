@@ -207,10 +207,10 @@ test('Agent', t =>
 test.serial('Setup', t =>
 {
     // these properties come from sinon
-    t.true(AgentStub.hasMany.called, 'AgentModel.hasMany has been executed');
+    t.true(AgentStub.hasMany.called, 'AgentModel.hasMany has not been executed');
     t.true(AgentStub.hasMany.calledWith(MetricStub), 'Argument should be the metric model');
 
-    t.true(MetricStub.belongsTo.called, 'MetricModel.belongsTo was executed.');
+    t.true(MetricStub.belongsTo.called, 'MetricModel.belongsTo was not executed.');
     t.true(MetricStub.belongsTo.calledWith(AgentStub), ' Argument should be the agent model')
 });
 
