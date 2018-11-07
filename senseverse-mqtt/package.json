@@ -1,0 +1,28 @@
+{
+  "name": "senseverse-mqtt",
+  "version": "1.0.0",
+  "private": true,
+  "description": "It is the MQTT communication module for IoT in senseverseJS",
+  "main": "server.js",
+  "scripts": {
+    "start": "NODE_ENV=production node server.js",
+    "start-dev": "DEBUG=platziverse:* nodemon server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "MQTT",
+    "Mosca",
+    "IoT"
+  ],
+  "author": "Eduardo Rasgado",
+  "license": "MIT",
+  "devDependencies": {
+    "nodemon": "^1.18.6"
+  },
+  "dependencies": {
+    "chalk": "^2.4.1",
+    "debug": "^4.1.0",
+    "mosca": "^2.8.3",
+    "redis": "^2.8.0"
+  }
+}
