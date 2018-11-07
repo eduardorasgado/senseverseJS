@@ -7,6 +7,7 @@
 // require index.js
 const db = require("./");
 const Sequelize = require("sequelize");
+const configModule = require("../config/configDB");
 
 // debug package to script and db process monitoring
 // second parenthesis: a namespace -> project:module:file
@@ -31,21 +32,8 @@ async function setup() {
     // handling answer, in case of negative answer, just exit
     if(!answer.setup) return console.log('Operation cancelled');
 
-    const config = {
-        database: process.env.DB_NAME || 'senseversedb',
-        username: process.env.DB_USER || 'senseversedb',
-        password: process.env.DB_PASS || 'senseversedb',
-        host: process.env.DB_HOST || 'localhost',
-        // Sequelize property to set database communication
-        dialect: 'postgres',
-        // to script monitoring
-        // each message arrives to setup, it will pass through debug
-        logging: s => debug(s),
-        // flag to start operations in index.js(sv-db)
-        setup: true,
-        // string based operators are now deprecated
-        operatorsAliases: Sequelize.Op
-    };
+    const config = configModule.configDB(true, Sequelize.Op, debug);
+
     // handling a promise
     await db(config)
         .catch(handleFatalError);

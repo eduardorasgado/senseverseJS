@@ -4,6 +4,8 @@ const debug = require('debug')('platziverse:mqtt');
 const mosca = require('mosca');
 const redis = require('redis');
 const chalk = require('chalk');
+const db = require("sv-db");
+const configModule = require("../config/configDB");
 
 const backend = {
     type: 'redis',
@@ -15,7 +17,10 @@ const backend = {
 const settings = {
     port: 1883,
     backend
-}
+};
+
+//postgres database
+const config = configModule.configDB(false, false, false);
 
 // mosca server
 // event emitter
