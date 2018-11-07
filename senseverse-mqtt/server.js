@@ -48,6 +48,12 @@ server.on('published', (packet, client) =>
     debug(`[Payload]: ${chalk.green.bold(packet.payload)}`);
 });
 
+/*
+* Testing the server with:
+* npm run start-dev
+* and(having installed a mqtt client, you can use mqtt in npm):
+*  mqtt pub -t 'agent/message' -h 'localhost' -m  'hola ya tienes las copias?'
+* */
 server.on('ready', async () =>
 {
     // once MQTT server is ready, then services in database are brought
