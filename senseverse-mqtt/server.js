@@ -26,6 +26,8 @@ const config = configModule.configDB(false, false, false);
 // event emitter
 const server = new mosca.Server(settings);
 
+let Agent, Metric = null;
+
 server.on('clientConnected', client =>
 {
     // id is automatically created by mosca server
@@ -46,8 +48,16 @@ server.on('published', (packet, client) =>
     debug(`[Payload]: ${chalk.green.bold(packet.payload)}`);
 });
 
-server.on('ready', () =>
+server.on('ready', async () =>
 {
+    // once MQTT server is ready, then services in database are brought
+    const services = await db(config)
+        .catch(handleFatalError);
+
+    // be able to connect to services in sv-db module
+    Agent = services.Agent;
+    Metric = services.Metric;
+
     console.log(`${chalk.green.bold('[platziverse-mqtt]')} server is running.`);
 });
 
