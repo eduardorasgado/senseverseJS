@@ -46,3 +46,19 @@ server.on('ready', () =>
     console.log(`${chalk.green.bold('[platziverse-mqtt]')} server is running.`);
 });
 
+server.on('error', handleFatalError);
+
+// HANDLERS
+
+// in case a service failure
+function handleFatalError(err)
+{
+    console.error(`${chalk.white.bgRed.bold("[Fatal Error]")} ${err.message}`);
+    console.error(err.stack);
+    process.exit(1);
+}
+
+// in case another error occurs but not inside the service
+process.on('uncaughtException', handleFatalError);
+// when we do not handle a promise rejection
+process.on('unhandledRejection', handleFatalError);
