@@ -40,9 +40,37 @@ server.on('clientConnected', client =>
     clients.set(client.id, null);
 });
 
-server.on('clientDisconnected', client =>
+server.on('clientDisconnected', async (client) =>
 {
     debug(`${chalk.red.bold("Client disconnected:")} ${client.id}`);
+    const agent = clients.get(client.id);
+    if(agent)
+    {
+        // Mark agent as disconnected
+        agent.connected = false;
+        try
+        {
+            // update state
+            await Agent.createOrUpdate(agent);
+        } catch(err)
+        {
+            handleError(err);
+            return;
+        }
+        // clients map don't need to store disconnected client anymore
+        clients.delete(client.id);
+
+        // notify the disconnection to server
+        server.publish({
+            topic: 'agent/disconnected',
+            payload: JSON.stringify({
+                agent: {
+                    uuid: agent.uuid
+                }
+            })
+        });
+        debug(`Client(${client.id}) associated to Agent (${agent.uuid}) is disconnected`)
+    }
 });
 
 // what is the packet and who sent it
