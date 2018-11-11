@@ -6,6 +6,7 @@ const redis = require('redis');
 const chalk = require('chalk');
 const db = require("sv-db");
 const configModule = require("../config/configDB");
+const { parsePayload } = require("./utils");
 
 const backend = {
     type: 'redis',
@@ -25,6 +26,9 @@ const config = configModule.configDB(false, false, false);
 // mosca server
 // event emitter
 const server = new mosca.Server(settings);
+// ot be able to save all messages from mqtt and do the relations with agent and metric models
+// data will be stored in postgresql db
+const clients = new Map();
 
 let Agent, Metric = null;
 
@@ -32,6 +36,8 @@ server.on('clientConnected', client =>
 {
     // id is automatically created by mosca server
     debug(`${chalk.red.bold("Client Connected")}: ${client.id} `);
+    // 
+    clients.set(client.id, null);
 });
 
 server.on('clientDisconnected', client =>
@@ -44,8 +50,25 @@ server.on('published', (packet, client) =>
 {
     // topic is message type
     debug(`Received: ${packet.topic}`);
-    // payload is where pkg info is stored
-    debug(`[Payload]: ${chalk.green.bold(packet.payload)}`);
+    
+    switch (packet.topic) {
+        case 'agent/connected':
+            //
+        case 'agent/disconected':
+            // payload is where pkg info is stored
+            debug(`[Payload]: ${chalk.green.bold(packet.payload)}`);
+            break;
+        case 'agent/message':
+            debug(`[Message]: ${chalk.green.bold(packet.payload)}`);
+            // here is where payload json with metric and agent info is handle
+            //console.log("payload heeere...");
+            const payload = parsePayload(packet.payload);
+            if(payload)
+            {
+                //
+            }
+            break;
+    }
 });
 
 /*
