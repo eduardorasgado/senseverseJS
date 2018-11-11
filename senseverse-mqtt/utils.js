@@ -15,7 +15,7 @@ function parsePayload(payload)
         payload = JSON.parse(payload);
     } catch (e) {
         // if error then deliver a empty json
-        payload = {}
+        payload = null;
     }
 
     return payload;

@@ -59,7 +59,7 @@ server.on('published', async (packet, client) =>
             debug(`[Payload]: ${chalk.green.bold(packet.payload)}`);
             break;
         case 'agent/message':
-            debug(`[Message]: ${chalk.green.bold(packet.payload)}`);
+            debug(`[Message debugger(actually not stored because not fommated)]: ${chalk.green.bold(packet.payload)}`);
             // here is where payload json with metric and agent info is handle
             //console.log("payload heeere...");
             /*
@@ -103,6 +103,27 @@ server.on('published', async (packet, client) =>
                             }
                         })
                     });
+                }
+
+                // Store Metrics
+                // using a for of: iterate over an array and obtaining data
+                // we are using this loop because we are using async await inside
+                for(let metric of payload.metrics)
+                {
+                    let m;
+                    try
+                    {
+                        // uuid, metric info
+                        m = await Metric.create(agent.uuid, metric);
+                    } catch(e)
+                    {
+                        handleError(e);
+                        // ignore the error
+                        return;
+                    }
+
+                    debug(`Metric ${m.id} saved on agent ${agent.uuid}.`);
+
                 }
             }
             break;
