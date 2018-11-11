@@ -46,7 +46,7 @@ server.on('clientDisconnected', client =>
 });
 
 // what is the packet and who sent it
-server.on('published', (packet, client) =>
+server.on('published', async (packet, client) =>
 {
     // topic is message type
     debug(`Received: ${packet.topic}`);
@@ -62,10 +62,48 @@ server.on('published', (packet, client) =>
             debug(`[Message]: ${chalk.green.bold(packet.payload)}`);
             // here is where payload json with metric and agent info is handle
             //console.log("payload heeere...");
+            /*
+            * payload should be like this:
+            * */
             const payload = parsePayload(packet.payload);
+
             if(payload)
             {
                 //
+                payload.agent.connected = true;
+                //console.log(payload);
+                let agent;
+                try
+                {
+                    // saving agent in postgres database
+                    agent = await Agent.createOrUpdate(payload.agent);
+                } catch(err)
+                {
+                    handleError(err);
+                    return;
+                }
+                debug(`Agent ${agent.uuid} saved.`);
+
+                // notifying Agent is Connected
+                if(!clients.get(client.id))
+                {
+                    // if the actual client id is null then store it
+                    clients.set(client.id, agent);
+                    // do a broadcast to notify mqtt, agent is stored
+                    // all users will know agent is now connected
+                    server.publish({
+                        topic: 'agent/connected',
+                        payload: JSON.stringify({
+                            agent: {
+                                uuid: agent.uuid,
+                                name: agent.name,
+                                hostname: agent.hostname,
+                                pid: agent.pid,
+                                connected: agent.connected
+                            }
+                        })
+                    });
+                }
             }
             break;
     }
@@ -100,6 +138,12 @@ function handleFatalError(err)
     console.error(`${chalk.white.bgRed.bold("[Fatal Error]")} ${err.message}`);
     console.error(err.stack);
     process.exit(1);
+}
+
+// handles the agent store process error
+function handleError(err)
+{
+    console.err(`${chalk.red('[Error]: ')} ${err.message}`);
 }
 
 // in case another error occurs but not inside the service
