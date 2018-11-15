@@ -1,0 +1,17 @@
+{
+  "name": "senseverse-agent",
+  "version": "1.0.0",
+  "private": true,
+  "description": "EventEmitter for senseverse(IoT control platform)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "IoT",
+    "control",
+    "sensors"
+  ],
+  "author": "Eduardo Rasgado",
+  "license": "MIT"
+}

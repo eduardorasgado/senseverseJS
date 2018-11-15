@@ -69,7 +69,7 @@ server.on('clientDisconnected', async (client) =>
                 }
             })
         });
-        debug(`Client(${client.id}) associated to Agent (${agent.uuid}) is disconnected`)
+        debug(`Client(${client.id}) associated to Agent (${agent.uuid}) is disconnected`);
     }
 });
 
