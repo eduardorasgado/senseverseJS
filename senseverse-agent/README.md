@@ -1,4 +1,5 @@
 # Senseverse-Agent Module
+This module works by connecting to MQTT client to publish metrics when agent is connected and to receive MQTT information other agents report.
 
 ## Usage
 ```js
