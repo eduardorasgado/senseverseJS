@@ -48,4 +48,10 @@ class SenseverseAgent extends EventEmitter
 // const agent = new SenseverseAgent();
 //agent.on('agent/message', console.log);
 // agent.emit('agent/message', 'this is a message');
+
+// new way to be tested:
+// agent.on('agent/message', console.log);
+// agent.connect();
+// you will receive 'this is a message' each (Interval seconds)
+// Stop it using: agent.disconnect();
 module.exports = SenseverseAgent;
